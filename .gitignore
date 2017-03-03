@@ -3,6 +3,8 @@
 *.a
 *.so
 
+.idea/
+
 # Folders
 _obj
 _test
@@ -22,3 +24,6 @@ _testmain.go
 *.exe
 *.test
 *.prof
+.idea/jtbot.iml
+.idea/modules.xml
+.idea/workspace.xml
