@@ -27,3 +27,5 @@ _testmain.go
 .idea/jtbot.iml
 .idea/modules.xml
 .idea/workspace.xml
+/.env
+/jtbot

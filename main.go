@@ -2,16 +2,21 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"strings"
 
 	"github.com/nlopes/slack"
 )
 
-func main() {
+var SLACK_TOKEN = os.Getenv("SLACK_TOKEN")
 
-	token := os.Getenv("SLACK_TOKEN")
-	api := slack.New(token)
+func main() {
+	if SLACK_TOKEN == "" {
+		log.Fatal("Missing SLACK_TOKEN env var")
+	}
+
+	api := slack.New(SLACK_TOKEN)
 	rtm := api.NewRTM()
 	go rtm.ManageConnection()
 
