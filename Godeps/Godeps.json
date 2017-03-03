@@ -1,0 +1,19 @@
+{
+	"ImportPath": "github.com/maknahar/jtbot",
+	"GoVersion": "go1.8",
+	"GodepVersion": "v79",
+	"Packages": [
+		"./..."
+	],
+	"Deps": [
+		{
+			"ImportPath": "github.com/nlopes/slack",
+			"Comment": "v0.0.1-176-g6519657",
+			"Rev": "6519657c021b7add19c4ef48220140cca0b1657b"
+		},
+		{
+			"ImportPath": "golang.org/x/net/websocket",
+			"Rev": "61557ac0112b576429a0df080e1c2cef5dfbb642"
+		}
+	]
+}
