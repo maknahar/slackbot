@@ -16,6 +16,8 @@ func main() {
 		log.Fatal("Missing SLACK_TOKEN env var")
 	}
 
+	fmt.Println(SLACK_TOKEN)
+
 	api := slack.New(SLACK_TOKEN)
 	rtm := api.NewRTM()
 	go rtm.ManageConnection()
