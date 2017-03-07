@@ -9,7 +9,21 @@ import (
 	"github.com/nlopes/slack"
 )
 
-var SLACK_TOKEN = os.Getenv("SLACK_TOKEN")
+var (
+	SLACK_TOKEN = os.Getenv("SLACK_TOKEN")
+
+	acceptedGreetings = map[string]bool{
+		"what's up?": true,
+		"hey!":       true,
+		"yo":         true,
+		"hi!":        true,
+	}
+	acceptedHowAreYou = map[string]bool{
+		"how's it going?": true,
+		"how are ya?":     true,
+		"feeling okay?":   true,
+	}
+)
 
 func main() {
 
@@ -27,7 +41,6 @@ Loop:
 	for {
 		select {
 		case msg := <-rtm.IncomingEvents:
-			fmt.Print("Event Received: ")
 			switch ev := msg.Data.(type) {
 			case *slack.ConnectedEvent:
 				fmt.Println("Connection counter:", ev.ConnectionCount)
@@ -61,18 +74,6 @@ func respond(rtm *slack.RTM, msg *slack.MessageEvent, prefix string) {
 	text = strings.TrimPrefix(text, prefix)
 	text = strings.TrimSpace(text)
 	text = strings.ToLower(text)
-
-	acceptedGreetings := map[string]bool{
-		"what's up?": true,
-		"hey!":       true,
-		"yo":         true,
-		"hi!":        true,
-	}
-	acceptedHowAreYou := map[string]bool{
-		"how's it going?": true,
-		"how are ya?":     true,
-		"feeling okay?":   true,
-	}
 
 	if acceptedGreetings[text] {
 		response = "What's up buddy!?!?!"
