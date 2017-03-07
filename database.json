@@ -5,7 +5,7 @@
       "category": "greetings",
       "prefixes":[],
       "case":true,
-      "formats":["hi","hello","hey","what's up"],
+      "formats":["hi","hello","hey","what's up",""],
       "postfixes":["!"],
       "response":"What's up buddy!?!?!"
     },
