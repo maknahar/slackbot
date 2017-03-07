@@ -6,23 +6,12 @@ import (
 	"os"
 	"strings"
 
+	"github.com/maknahar/jtbot/interpreter"
 	"github.com/nlopes/slack"
 )
 
 var (
 	SLACK_TOKEN = os.Getenv("SLACK_TOKEN")
-
-	acceptedGreetings = map[string]bool{
-		"what's up?": true,
-		"hey!":       true,
-		"yo":         true,
-		"hi!":        true,
-	}
-	acceptedHowAreYou = map[string]bool{
-		"how's it going?": true,
-		"how are ya?":     true,
-		"feeling okay?":   true,
-	}
 )
 
 func main() {
@@ -74,12 +63,10 @@ func respond(rtm *slack.RTM, msg *slack.MessageEvent, prefix string) {
 	text = strings.TrimPrefix(text, prefix)
 	text = strings.TrimSpace(text)
 	text = strings.ToLower(text)
-
-	if acceptedGreetings[text] {
-		response = "What's up buddy!?!?!"
-		rtm.SendMessage(rtm.NewOutgoingMessage(response, msg.Channel))
-	} else if acceptedHowAreYou[text] {
-		response = "Good. How are you?"
+	response = interpreter.GetResponse(text)
+	if response == "" {
+		rtm.SendMessage(rtm.NewOutgoingMessage(`I'm sorry, I don't understand! Sometimes I have an easier time with a few simple keywords.`, msg.Channel))
+	} else {
 		rtm.SendMessage(rtm.NewOutgoingMessage(response, msg.Channel))
 	}
 }

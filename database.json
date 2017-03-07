@@ -1,0 +1,30 @@
+{
+  "version":0.1,
+  "messages":[
+    {
+      "category": "greetings",
+      "prefixes":[],
+      "case":true,
+      "formats":["hi","hello","hey","what's up"],
+      "postfixes":["!"],
+      "response":"What's up buddy!?!?!"
+    },
+    {
+      "category": "HowAreYou",
+      "prefixes":[],
+      "case":true,
+      "formats":["how's it going","How are you","what is going on"],
+      "postfixes":["!"],
+      "response":"Good. How are you?"
+    },
+    {
+      "category": "HowAreYouResponse",
+      "prefixes":[],
+      "case":true,
+      "formats":["Good","I am good","Awesome","I am awesome"],
+      "postfixes":["!"],
+      "response":"Good to know. Take care."
+    }
+
+  ]
+}
