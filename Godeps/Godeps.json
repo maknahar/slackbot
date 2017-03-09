@@ -7,6 +7,11 @@
 	],
 	"Deps": [
 		{
+			"ImportPath": "github.com/julienschmidt/httprouter",
+			"Comment": "v1.1-41-g8a45e95",
+			"Rev": "8a45e95fc75cb77048068a62daed98cc22fdac7c"
+		},
+		{
 			"ImportPath": "github.com/nlopes/slack",
 			"Comment": "v0.0.1-176-g6519657",
 			"Rev": "6519657c021b7add19c4ef48220140cca0b1657b"
