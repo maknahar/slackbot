@@ -2,7 +2,6 @@ package interpreter
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
