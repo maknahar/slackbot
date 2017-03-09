@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"os"
 	"strings"
 
@@ -21,40 +22,15 @@ func main() {
 	}
 
 	api := slack.New(SLACK_TOKEN)
-	api.SetDebug(true)
+	api.SetDebug(false)
 
 	rtm := api.NewRTM()
 	go rtm.ManageConnection()
+	go runSlackListener(rtm, api)
+	router := GetRouter()
+	log.Println(os.Getenv("APP_NAME"), "listening in port", os.Getenv("PORT"))
+	http.ListenAndServe(":"+os.Getenv("PORT"), router)
 
-Loop:
-	for {
-		select {
-		case msg := <-rtm.IncomingEvents:
-			switch ev := msg.Data.(type) {
-			case *slack.ConnectedEvent:
-				fmt.Println("Connection counter:", ev.ConnectionCount)
-
-			case *slack.MessageEvent:
-				fmt.Printf("Message: %v\n", ev)
-				info := rtm.GetInfo()
-				prefix := fmt.Sprintf("<@%s> ", info.User.ID)
-
-				if ev.User != info.User.ID && strings.HasPrefix(ev.Text, prefix) {
-					respond(rtm, ev, prefix)
-				}
-
-			case *slack.RTMError:
-				fmt.Printf("Error: %s\n", ev.Error())
-
-			case *slack.InvalidAuthEvent:
-				fmt.Printf("Invalid credentials")
-				break Loop
-
-			default:
-				//Take no action
-			}
-		}
-	}
 }
 
 func respond(rtm *slack.RTM, msg *slack.MessageEvent, prefix string) {
@@ -68,5 +44,38 @@ func respond(rtm *slack.RTM, msg *slack.MessageEvent, prefix string) {
 		rtm.SendMessage(rtm.NewOutgoingMessage(`I'm sorry, I don't understand! Sometimes I have an easier time with a few simple keywords.`, msg.Channel))
 	} else {
 		rtm.SendMessage(rtm.NewOutgoingMessage(response, msg.Channel))
+	}
+}
+
+func runSlackListener(rtm *slack.RTM, api *slack.Client) {
+
+Loop:
+	for {
+		select {
+		case msg := <-rtm.IncomingEvents:
+			switch ev := msg.Data.(type) {
+			case *slack.ConnectedEvent:
+				fmt.Println("Connection counter:", ev.ConnectionCount)
+
+			case *slack.MessageEvent:
+				fmt.Printf("Message: %v\n", ev)
+				info := rtm.GetInfo()
+				prefix := fmt.Sprintf("<@%s>", info.User.ID)
+				//TODO add prefix exception if message is a direct message to bot
+				if ev.User != info.User.ID && strings.HasPrefix(ev.Text, prefix) {
+					respond(rtm, ev, prefix)
+				}
+				//fmt.Println(ev.User != info.User.ID && strings.HasPrefix(ev.Text, prefix))
+			case *slack.RTMError:
+				fmt.Printf("Error: %s\n", ev.Error())
+
+			case *slack.InvalidAuthEvent:
+				fmt.Printf("Invalid credentials")
+				break Loop
+
+			default:
+
+			}
+		}
 	}
 }

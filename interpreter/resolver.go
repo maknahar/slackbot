@@ -2,6 +2,7 @@ package interpreter
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
@@ -40,7 +41,9 @@ func GetResponse(q string) (response string) {
 
 func ProcessQuery(q string) *Message {
 	for k, v := range patternMap {
+		//fmt.Println(k, q)
 		if k.MatchString(q) {
+
 			return &v
 		}
 	}
