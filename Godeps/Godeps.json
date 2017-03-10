@@ -12,6 +12,10 @@
 			"Rev": "8a45e95fc75cb77048068a62daed98cc22fdac7c"
 		},
 		{
+			"ImportPath": "github.com/maknahar/go-utils",
+			"Rev": "d61153e8bfa80d4e04a9052dba98212ec00c2a05"
+		},
+		{
 			"ImportPath": "github.com/nlopes/slack",
 			"Comment": "v0.0.1-176-g6519657",
 			"Rev": "6519657c021b7add19c4ef48220140cca0b1657b"
