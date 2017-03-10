@@ -6,14 +6,16 @@ import (
 )
 
 type Message struct {
-	ID        string   `json:"id"`
-	Category  string   `json:"category"`
-	Prefixes  []string `json:"prefixes"`
-	Case      bool     `json:"case"`
-	Formats   []string `json:"formats"`
-	Postfixes []string `json:"postfixes"`
-	Response  string   `json:"response"`
-	Regex     *regexp.Regexp
+	ID               string   `json:"id"`
+	Category         string   `json:"category"`
+	Prefixes         []string `json:"prefixes"`
+	PrefixMendatory  bool     `json:"prefixMandatory"`
+	Case             bool     `json:"case"`
+	Formats          []string `json:"formats"`
+	Postfixes        []string `json:"postfixes"`
+	PostfixMendatory bool     `json:"postfixMandatory"`
+	Response         string   `json:"response"`
+	Regex            *regexp.Regexp
 }
 
 func (m *Message) GetRegex() *regexp.Regexp {
@@ -22,7 +24,7 @@ func (m *Message) GetRegex() *regexp.Regexp {
 	}
 
 	re := ""
-	if m.Case {
+	if !m.Case {
 		re += "(?i)"
 	}
 	re += m.getPrefixRegex()
@@ -48,7 +50,12 @@ func (m *Message) getPrefixRegex() string {
 			re += v + "|"
 		}
 		re = strings.TrimRight(re, "|")
-		re += "]{0,1}"
+		re += "]"
+		if m.PrefixMendatory {
+			re += "{1,1}"
+		} else {
+			re += "{0,1}"
+		}
 	}
 	return re
 }
@@ -61,7 +68,12 @@ func (m *Message) getPostfixRegex() string {
 			re += v + "|"
 		}
 		re = strings.TrimRight(re, "|")
-		re += "]{0,1}"
+		re += "]"
+		if m.PostfixMendatory {
+			re += "{1,1}"
+		} else {
+			re += "{0,1}"
+		}
 	}
 	return re
 }

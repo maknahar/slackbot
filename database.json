@@ -4,15 +4,15 @@
     {
       "category": "greetings",
       "prefixes":[],
-      "case":true,
-      "formats":["","hi","hello","hey","what's up"],
+      "case":false,
+      "formats":["hi","hello","hey","what's up"],
       "postfixes":["!"],
       "response":"What's up buddy!?!?!"
     },
     {
       "category": "HowAreYou",
       "prefixes":[],
-      "case":true,
+      "case":false,
       "formats":["how's it going","How are you","what is going on"],
       "postfixes":["!"],
       "response":"Good. How are you?"
@@ -20,10 +20,19 @@
     {
       "category": "HowAreYouResponse",
       "prefixes":[],
-      "case":true,
+      "case":false,
       "formats":["Good","I am good","Awesome","I am awesome"],
       "postfixes":["!"],
       "response":"Good to know. Take care."
+    },
+    {
+      "category": "Show Justickets Order",
+      "prefixes":["Show me the order"],
+      "prefixMandatory":true,
+      "case":false,
+      "formats":[],
+      "postfixes":[],
+      "response":""
     }
 
   ]

@@ -2,6 +2,7 @@ package interpreter
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
@@ -40,10 +41,23 @@ func GetResponse(q string) (response string) {
 
 func ProcessQuery(q string) *Message {
 	for k, v := range patternMap {
-		//fmt.Println(k, q)
+		fmt.Println(k, q, k.MatchString(q))
 		if k.MatchString(q) {
+			if v.Response != "" {
+				return &v
+			}
+			switch v.Category {
+			case "Show Justickets Order":
+				res, err := GetOrder(q)
+				if err != nil {
+					log.Println("Error:", err)
+					res = err.Error()
+				}
+				v.Response = res
+				return &v
+			default:
 
-			return &v
+			}
 		}
 	}
 	return &Message{}

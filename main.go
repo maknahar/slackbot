@@ -63,7 +63,7 @@ Loop:
 				prefix := fmt.Sprintf("<@%s>", info.User.ID)
 				//TODO add prefix exception if message is a direct message to bot
 				if ev.User != info.User.ID && strings.HasPrefix(ev.Text, prefix) {
-					respond(rtm, ev, prefix)
+					go respond(rtm, ev, prefix)
 				}
 				//fmt.Println(ev.User != info.User.ID && strings.HasPrefix(ev.Text, prefix))
 			case *slack.RTMError:
