@@ -91,6 +91,28 @@ func ProcessQuery(q string) slack.PostMessageParameters {
 				attachment.Fields = append(attachment.Fields, slack.AttachmentField{Title: "Bill Total",
 					Value: strconv.FormatFloat(res.Bill.Total, 'G', 6, 64),
 					Short: true})
+				attachment.Fields = append(attachment.Fields, slack.AttachmentField{Title: "Channel",
+					Value: res.Channel,
+					Short: true})
+				attachment.Fields = append(attachment.Fields, slack.AttachmentField{Title: "Session ID",
+					Value: res.SessionID,
+					Short: false})
+				if res.AssistedOrderID.String != "" {
+					attachment.Fields = append(attachment.Fields, slack.AttachmentField{Title: "Session ID",
+						Value: res.AssistedOrderID.String,
+						Short: false})
+				}
+				if res.UserID != "" {
+					attachment.Fields = append(attachment.Fields, slack.AttachmentField{Title: "User ID",
+						Value: res.UserID,
+						Short: false})
+				}
+				if res.Confirmed {
+					attachment.Fields = append(attachment.Fields, slack.AttachmentField{Title: "Booking Code",
+						Value: res.BookingCode,
+						Short: true})
+				}
+
 				return params
 			default:
 
