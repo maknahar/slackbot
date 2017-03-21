@@ -27,13 +27,12 @@
     },
     {
       "category": "Show Justickets Order",
-      "prefixes":["Show me the order"],
+      "prefixes":["Show me the order","Order "],
       "prefixMandatory":true,
       "case":false,
       "formats":[],
       "postfixes":[],
       "response":""
     }
-
   ]
 }
