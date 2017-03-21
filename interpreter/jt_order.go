@@ -16,7 +16,7 @@ func GetSlackMessage() slack.PostMessageParameters {
 	msg := slack.PostMessageParameters{}
 	msg.AsUser = true
 	msg.Attachments = append(msg.Attachments, slack.Attachment{
-		Color:      "#36a64f",
+		Color:      "#9932CC",
 		AuthorName: "Justickets Bot",
 		AuthorLink: "https://github.com/maknahar/jtbot",
 		AuthorIcon: ":robot_face:",
