@@ -1,17 +1,28 @@
 package interpreter
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"strings"
 
-	"encoding/json"
-
-	"log"
-
 	"github.com/maknahar/go-utils"
+	"github.com/nlopes/slack"
 )
+
+func GetSlackMessage() slack.PostMessageParameters {
+	msg := slack.PostMessageParameters{}
+	msg.AsUser = true
+	msg.Attachments = append(msg.Attachments, slack.Attachment{
+		Color:      "#36a64f",
+		AuthorName: "Justickets Bot",
+		AuthorLink: "https://github.com/maknahar/jtbot",
+		AuthorIcon: ":robot_face:",
+	})
+	return msg
+}
 
 type Order struct {
 	SessionID string `json:"sessionId"`
@@ -72,7 +83,7 @@ type Order struct {
 	RedirectURL string `json:"redirectURL"`
 }
 
-func GetOrder(msg string) (string, error) {
+func GetOrder(msg string) (*Order, error) {
 	orderID := ""
 	for _, v := range strings.Split(msg, " ") {
 		if go_utils.IsValidUUIDV4(v) {
@@ -81,30 +92,27 @@ func GetOrder(msg string) (string, error) {
 		}
 	}
 	if orderID == "" {
-		return "", fmt.Errorf("You are almost there. I can feel it. Try something like `Show me the order details of <order id>`")
+		return nil, fmt.Errorf("You are almost there. I can feel it. Try something like `Show me the order details of <order id>`")
 	}
 	res, err := http.Get("https://pm.justickets.co/orders?block_code=" + orderID)
 	if err != nil {
-		return "", fmt.Errorf("Error in getting order data %v", err)
+		return nil, fmt.Errorf("Error in getting order data %v", err)
 	}
 	d, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		return "", fmt.Errorf("Error in reading order data %v", err)
+		return nil, fmt.Errorf("Error in reading order data %v", err)
 	}
 
 	order := new(Order)
 	err = json.Unmarshal(d, order)
 	if err != nil {
 		log.Println("Error in decoding jt order", err, go_utils.JsonPrettyPrint(string(d), "", "\t"))
-		return go_utils.JsonPrettyPrint(string(d), "", "\t"), nil
+		return order, nil
 	}
-	o := fmt.Sprintln(">>>",
-		order.BlockCode,
-		"\n*Session ID:* ",
-		order.SessionID,
-		"\n*Paid:* ",
-		order.Paid,
-		"\n*Confirmed:* ",
-		order.Confirmed)
-	return o, nil
+
+	if order.SessionID == "" {
+		return order, nil
+	}
+
+	return order, nil
 }

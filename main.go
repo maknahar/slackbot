@@ -33,17 +33,16 @@ func main() {
 
 }
 
-func respond(rtm *slack.RTM, msg *slack.MessageEvent, prefix string) {
-	var response string
+func respond(rtm *slack.RTM, api *slack.Client, msg *slack.MessageEvent, prefix string) {
 	text := msg.Text
 	text = strings.TrimPrefix(text, prefix)
 	text = strings.TrimSpace(text)
 	text = strings.ToLower(text)
-	response = interpreter.GetResponse(text)
-	if response == "" {
+	response := interpreter.ProcessQuery(text)
+	if response.Attachments[0].Pretext == "" {
 		rtm.SendMessage(rtm.NewOutgoingMessage(`I'm sorry, I don't understand! Sometimes I have an easier time with a few simple keywords.`, msg.Channel))
 	} else {
-		rtm.SendMessage(rtm.NewOutgoingMessage(response, msg.Channel))
+		api.PostMessage(msg.Channel, "", response)
 	}
 }
 
@@ -58,12 +57,11 @@ Loop:
 				fmt.Println("Connection counter:", ev.ConnectionCount)
 
 			case *slack.MessageEvent:
-				fmt.Printf("Message: %v\n", ev)
 				info := rtm.GetInfo()
 				prefix := fmt.Sprintf("<@%s>", info.User.ID)
 				//TODO add prefix exception if message is a direct message to bot
 				if ev.User != info.User.ID && strings.HasPrefix(ev.Text, prefix) {
-					go respond(rtm, ev, prefix)
+					go respond(rtm, api, ev, prefix)
 				}
 				//fmt.Println(ev.User != info.User.ID && strings.HasPrefix(ev.Text, prefix))
 			case *slack.RTMError:
