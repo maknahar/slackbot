@@ -35,7 +35,7 @@ func main() {
 
 func respond(rtm *slack.RTM, api *slack.Client, msg *slack.MessageEvent, prefix string) {
 	text := msg.Text
-	text = strings.TrimPrefix(text, prefix)
+	text = strings.Replace(text, prefix, "", -1)
 	text = strings.TrimSpace(text)
 	text = strings.ToLower(text)
 	response := interpreter.ProcessQuery(text)
@@ -60,7 +60,7 @@ Loop:
 				info := rtm.GetInfo()
 				prefix := fmt.Sprintf("<@%s>", info.User.ID)
 				//TODO add prefix exception if message is a direct message to bot
-				if ev.User != info.User.ID && strings.HasPrefix(ev.Text, prefix) {
+				if ev.User != info.User.ID && strings.Contains(ev.Text, prefix) {
 					go respond(rtm, api, ev, prefix)
 				}
 				//fmt.Println(ev.User != info.User.ID && strings.HasPrefix(ev.Text, prefix))
