@@ -8,24 +8,11 @@ import (
 	"net/http"
 	"strings"
 
+	"strconv"
+
 	"github.com/maknahar/go-utils"
 	"github.com/nlopes/slack"
 )
-
-func GetSlackMessage() slack.PostMessageParameters {
-	msg := slack.PostMessageParameters{}
-	msg.AsUser = true
-	msg.Attachments = append(msg.Attachments, slack.Attachment{
-		Color:      "#9932CC",
-		AuthorName: "Justickets Bot",
-		//AuthorSubname: "Mayank Patel",
-		AuthorLink: "https://github.com/maknahar/jtbot",
-		AuthorIcon: "https://data.justickets.co/favicon.ico",
-		Footer:     "Always in your service",
-		FooterIcon: "http://cconnect.s3.amazonaws.com/wp-content/uploads/2017/02/2017-Funko-Pop-Mystery-Science-Theater-3000-Crow-T-Robot-e1486480774184.jpg",
-	})
-	return msg
-}
 
 type Order struct {
 	SessionID string `json:"sessionId"`
@@ -118,4 +105,61 @@ func GetOrder(msg string) (*Order, error) {
 	}
 
 	return order, nil
+}
+
+func (o *Order) FormatSlackMessage(attachment *slack.Attachment) {
+	if o.SessionID == "" {
+		attachment.Pretext = "No Order found for o id " + o.BlockCode
+		attachment.Color = "#BDB76B"
+		attachment.Fields = append(attachment.Fields,
+			slack.AttachmentField{
+				Title: "Seach On Admin",
+				Value: "https://admin.justickets.co/bookings?detail=" + o.BlockCode,
+				Short: true})
+		return
+	}
+	attachment.Pretext = "Found Order: " + o.BlockCode
+	attachment.Fields = append(attachment.Fields, slack.AttachmentField{
+		Title: "Name",
+		Value: o.Name,
+		Short: true})
+	attachment.Fields = append(attachment.Fields, slack.AttachmentField{Title: "Email",
+		Value: o.Email,
+		Short: true})
+	attachment.Fields = append(attachment.Fields, slack.AttachmentField{Title: "Mobile",
+		Value: o.Mobile,
+		Short: true})
+	attachment.Fields = append(attachment.Fields, slack.AttachmentField{Title: "Paid",
+		Value: strconv.FormatBool(o.Paid),
+		Short: true})
+	attachment.Fields = append(attachment.Fields, slack.AttachmentField{Title: "Confirmed",
+		Value: strconv.FormatBool(o.Confirmed),
+		Short: true})
+	attachment.Fields = append(attachment.Fields, slack.AttachmentField{Title: "Failed",
+		Value: strconv.FormatBool(o.Cancelled),
+		Short: true})
+	attachment.Fields = append(attachment.Fields, slack.AttachmentField{Title: "Bill Total",
+		Value: strconv.FormatFloat(o.Bill.Total, 'G', 6, 64),
+		Short: true})
+	attachment.Fields = append(attachment.Fields, slack.AttachmentField{Title: "Channel",
+		Value: o.Channel,
+		Short: true})
+	attachment.Fields = append(attachment.Fields, slack.AttachmentField{Title: "Session ID",
+		Value: o.SessionID,
+		Short: false})
+	if o.AssistedOrderID.String != "" {
+		attachment.Fields = append(attachment.Fields, slack.AttachmentField{Title: "Session ID",
+			Value: o.AssistedOrderID.String,
+			Short: false})
+	}
+	if o.UserID != "" {
+		attachment.Fields = append(attachment.Fields, slack.AttachmentField{Title: "User ID",
+			Value: o.UserID,
+			Short: false})
+	}
+	if o.Confirmed {
+		attachment.Fields = append(attachment.Fields, slack.AttachmentField{Title: "Booking Code",
+			Value: o.BookingCode,
+			Short: true})
+	}
 }

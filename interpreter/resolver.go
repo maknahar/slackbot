@@ -8,8 +8,6 @@ import (
 	"os"
 	"regexp"
 
-	"strconv"
-
 	"github.com/nlopes/slack"
 )
 
@@ -52,67 +50,13 @@ func ProcessQuery(q string) slack.PostMessageParameters {
 			}
 			switch v.Category {
 			case "Show Justickets Order":
-				res, err := GetOrder(q)
+				order, err := GetOrder(q)
 				if err != nil {
 					log.Println("Error:", err)
 					attachment.Pretext = err.Error()
 					return params
 				}
-				if res.SessionID == "" {
-					attachment.Pretext = "No Order found for order id " + res.BlockCode
-					attachment.Color = "#BDB76B"
-					attachment.Fields = append(attachment.Fields,
-						slack.AttachmentField{
-							Title: "Seach On Admin",
-							Value: "https://admin.justickets.co/bookings?detail=" + res.BlockCode,
-							Short: true})
-					return params
-				}
-				attachment.Pretext = "Found Order: " + res.BlockCode
-				attachment.Fields = append(attachment.Fields, slack.AttachmentField{
-					Title: "Name",
-					Value: res.Name,
-					Short: true})
-				attachment.Fields = append(attachment.Fields, slack.AttachmentField{Title: "Email",
-					Value: res.Email,
-					Short: true})
-				attachment.Fields = append(attachment.Fields, slack.AttachmentField{Title: "Mobile",
-					Value: res.Mobile,
-					Short: true})
-				attachment.Fields = append(attachment.Fields, slack.AttachmentField{Title: "Paid",
-					Value: strconv.FormatBool(res.Paid),
-					Short: true})
-				attachment.Fields = append(attachment.Fields, slack.AttachmentField{Title: "Confirmed",
-					Value: strconv.FormatBool(res.Confirmed),
-					Short: true})
-				attachment.Fields = append(attachment.Fields, slack.AttachmentField{Title: "Failed",
-					Value: strconv.FormatBool(res.Cancelled),
-					Short: true})
-				attachment.Fields = append(attachment.Fields, slack.AttachmentField{Title: "Bill Total",
-					Value: strconv.FormatFloat(res.Bill.Total, 'G', 6, 64),
-					Short: true})
-				attachment.Fields = append(attachment.Fields, slack.AttachmentField{Title: "Channel",
-					Value: res.Channel,
-					Short: true})
-				attachment.Fields = append(attachment.Fields, slack.AttachmentField{Title: "Session ID",
-					Value: res.SessionID,
-					Short: false})
-				if res.AssistedOrderID.String != "" {
-					attachment.Fields = append(attachment.Fields, slack.AttachmentField{Title: "Session ID",
-						Value: res.AssistedOrderID.String,
-						Short: false})
-				}
-				if res.UserID != "" {
-					attachment.Fields = append(attachment.Fields, slack.AttachmentField{Title: "User ID",
-						Value: res.UserID,
-						Short: false})
-				}
-				if res.Confirmed {
-					attachment.Fields = append(attachment.Fields, slack.AttachmentField{Title: "Booking Code",
-						Value: res.BookingCode,
-						Short: true})
-				}
-
+				order.FormatSlackMessage(attachment)
 				return params
 			default:
 
