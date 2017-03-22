@@ -8,7 +8,7 @@
       "case":false,
       "formats":[],
       "postfixes":[],
-      "response":"Usase: Order <block code>\n or just say hi!"
+      "response":"There is two ways I can help you. Either say hi! or \n Order <block code>"
     },
     {
       "category": "greetings",
