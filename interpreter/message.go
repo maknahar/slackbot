@@ -45,12 +45,12 @@ func (m *Message) GetRegex() *regexp.Regexp {
 func (m *Message) getPrefixRegex() string {
 	re := ""
 	if len(m.Prefixes) > 0 {
-		re += "["
+		re += "("
 		for _, v := range m.Prefixes {
 			re += v + "|"
 		}
 		re = strings.TrimRight(re, "|")
-		re += "]"
+		re += ")"
 		if m.PrefixMendatory {
 			re += "{1,1}"
 		} else {
@@ -63,12 +63,12 @@ func (m *Message) getPrefixRegex() string {
 func (m *Message) getPostfixRegex() string {
 	re := ""
 	if len(m.Postfixes) > 0 {
-		re += "["
+		re += "("
 		for _, v := range m.Postfixes {
 			re += v + "|"
 		}
 		re = strings.TrimRight(re, "|")
-		re += "]"
+		re += ")"
 		if m.PostfixMendatory {
 			re += "{1,1}"
 		} else {

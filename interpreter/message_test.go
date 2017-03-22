@@ -24,8 +24,8 @@ func TestMessage_GetRegexWithPostFix(t *testing.T) {
 	m.Formats = append(m.Formats, "hi")
 	m.Postfixes = append(m.Postfixes, "!")
 	re := m.GetRegex()
-	if re.String() != "(?i)(hi)[!]{0,1}" {
-		t.Error("Error in generating the regex. Expected:", "(?i)(hi)[!]{0,1}", "Got:", re.String())
+	if re.String() != "(?i)(hi)(!){0,1}" {
+		t.Error("Error in generating the regex. Expected:", "(?i)(hi)(!){0,1}", "Got:", re.String())
 	}
 }
 
@@ -34,7 +34,7 @@ func TestMessage_GetRegexWithPreFix(t *testing.T) {
 	m.Formats = append(m.Formats, "hi")
 	m.Prefixes = append(m.Prefixes, "!")
 	re := m.GetRegex()
-	if re.String() != "(?i)[!]{0,1}(hi)" {
-		t.Error("Error in generating the regex. Expected:", "(?i)(hi)[!]{0,1}", "Got:", re.String())
+	if re.String() != "(?i)(!){0,1}(hi)" {
+		t.Error("Error in generating the regex. Expected:", "(?i)(!){0,1}(hi)", "Got:", re.String())
 	}
 }

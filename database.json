@@ -2,6 +2,15 @@
   "version":0.1,
   "messages":[
     {
+      "category": "Help",
+      "prefixes":["help"],
+      "prefixMandatory":true,
+      "case":false,
+      "formats":[],
+      "postfixes":[],
+      "response":"Usase: Order <block code>\n or just say hi!"
+    },
+    {
       "category": "greetings",
       "prefixes":[],
       "case":false,
