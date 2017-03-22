@@ -42,6 +42,15 @@
       "formats":[],
       "postfixes":[],
       "response":""
+    },
+    {
+      "category": "Show Justickets Bill",
+      "prefixes":["Show me the bill","bill "],
+      "prefixMandatory":true,
+      "case":false,
+      "formats":[],
+      "postfixes":[],
+      "response":""
     }
   ]
 }

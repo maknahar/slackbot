@@ -58,6 +58,15 @@ func ProcessQuery(q string) slack.PostMessageParameters {
 				}
 				order.FormatSlackMessage(attachment)
 				return params
+			case "Show Justickets Bill":
+				order, err := GetOrder(q)
+				if err != nil {
+					log.Println("Error:", err)
+					attachment.Pretext = err.Error()
+					return params
+				}
+				order.FormatSlackMessageForBill(attachment)
+				return params
 			default:
 
 			}
