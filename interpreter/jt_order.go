@@ -18,8 +18,9 @@ func GetSlackMessage() slack.PostMessageParameters {
 	msg.Attachments = append(msg.Attachments, slack.Attachment{
 		Color:      "#9932CC",
 		AuthorName: "Justickets Bot",
+		//AuthorSubname: "Mayank Patel",
 		AuthorLink: "https://github.com/maknahar/jtbot",
-		AuthorIcon: ":robot_face:",
+		AuthorIcon: "https://data.justickets.co/favicon.ico",
 		Footer:     "Always in your service",
 		FooterIcon: "http://cconnect.s3.amazonaws.com/wp-content/uploads/2017/02/2017-Funko-Pop-Mystery-Science-Theater-3000-Crow-T-Robot-e1486480774184.jpg",
 	})
