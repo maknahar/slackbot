@@ -20,6 +20,7 @@ func GetSlackMessage() slack.PostMessageParameters {
 		AuthorName: "Justickets Bot",
 		AuthorLink: "https://github.com/maknahar/jtbot",
 		AuthorIcon: ":robot_face:",
+		Footer:     "Always in your service",
 		FooterIcon: "http://cconnect.s3.amazonaws.com/wp-content/uploads/2017/02/2017-Funko-Pop-Mystery-Science-Theater-3000-Crow-T-Robot-e1486480774184.jpg",
 	})
 	return msg
