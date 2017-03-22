@@ -109,7 +109,63 @@ func GetOrder(msg string) (*Order, error) {
 
 func (o *Order) FormatSlackMessage(attachment *slack.Attachment) {
 	if o.SessionID == "" {
-		attachment.Pretext = "No Order found for o id " + o.BlockCode
+		attachment.Pretext = "No Order found for id " + o.BlockCode
+		attachment.Color = "#BDB76B"
+		attachment.Title = "Search On Admin"
+		attachment.TitleLink = "https://admin.justickets.co/bookings?detail=" + o.BlockCode
+		return
+	}
+	attachment.Pretext = "Found Order: " + o.BlockCode
+	attachment.Title = "Movie Ticket:"
+	attachment.TitleLink = "https://admin.justickets.co/bookings?detail=" + o.BlockCode
+	attachment.Fields = append(attachment.Fields, slack.AttachmentField{
+		Title: "Name",
+		Value: o.Name,
+		Short: true})
+	attachment.Fields = append(attachment.Fields, slack.AttachmentField{Title: "Email",
+		Value: o.Email,
+		Short: true})
+	attachment.Fields = append(attachment.Fields, slack.AttachmentField{Title: "Mobile",
+		Value: o.Mobile,
+		Short: true})
+	attachment.Fields = append(attachment.Fields, slack.AttachmentField{Title: "Paid",
+		Value: strconv.FormatBool(o.Paid),
+		Short: true})
+	attachment.Fields = append(attachment.Fields, slack.AttachmentField{Title: "Confirmed",
+		Value: strconv.FormatBool(o.Confirmed),
+		Short: true})
+	attachment.Fields = append(attachment.Fields, slack.AttachmentField{Title: "Failed",
+		Value: strconv.FormatBool(o.Cancelled),
+		Short: true})
+	attachment.Fields = append(attachment.Fields, slack.AttachmentField{Title: "Bill Total",
+		Value: strconv.FormatFloat(o.Bill.Total, 'G', 6, 64),
+		Short: true})
+	attachment.Fields = append(attachment.Fields, slack.AttachmentField{Title: "Channel",
+		Value: o.Channel,
+		Short: true})
+	attachment.Fields = append(attachment.Fields, slack.AttachmentField{Title: "Session ID",
+		Value: o.SessionID,
+		Short: false})
+	if o.AssistedOrderID.String != "" {
+		attachment.Fields = append(attachment.Fields, slack.AttachmentField{Title: "Session ID",
+			Value: o.AssistedOrderID.String,
+			Short: false})
+	}
+	if o.UserID != "" {
+		attachment.Fields = append(attachment.Fields, slack.AttachmentField{Title: "User ID",
+			Value: o.UserID,
+			Short: false})
+	}
+	if o.Confirmed {
+		attachment.Fields = append(attachment.Fields, slack.AttachmentField{Title: "Booking Code",
+			Value: o.BookingCode,
+			Short: true})
+	}
+}
+
+func (o *Order) FormatSlackMessageForBill(attachment *slack.Attachment) {
+	if o.SessionID == "" {
+		attachment.Pretext = "No Order found for id " + o.BlockCode
 		attachment.Color = "#BDB76B"
 		attachment.Fields = append(attachment.Fields,
 			slack.AttachmentField{
