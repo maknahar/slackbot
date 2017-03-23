@@ -117,7 +117,7 @@ func (o *Order) FormatSlackMessage(attachment *slack.Attachment) {
 	}
 	attachment.Pretext = "Found Order: " + o.BlockCode
 	attachment.Title = "Movie Ticket:"
-	attachment.TitleLink = "https://admin.justickets.co/bookings?detail=" + o.BlockCode
+	attachment.TitleLink = "https://www.justickets.in/orders/" + o.BlockCode
 	attachment.Fields = append(attachment.Fields, slack.AttachmentField{
 		Title: "Name",
 		Value: o.Name,
