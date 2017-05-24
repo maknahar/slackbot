@@ -67,10 +67,52 @@ func ProcessQuery(q string) slack.PostMessageParameters {
 				}
 				order.FormatSlackMessageForBill(attachment)
 				return params
+
+			case "Staging Report is Down":
+				r, err := GetReportStatus(true)
+				if err != nil {
+					log.Println("Error:", err)
+					attachment.Pretext = err.Error()
+					return params
+				}
+				if r == nil {
+					attachment.Pretext = "Report is in sync"
+					return params
+				}
+				cause := r.GetDelayReason()
+				if cause == "" {
+					cause = "Sorry, I could not diagnose the problem in report sync delay"
+				}
+				attachment.Pretext = cause
+
+				return params
+
+			case "Report is Down":
+				r, err := GetReportStatus(false)
+				if err != nil {
+					log.Println("Error:", err)
+					attachment.Pretext = err.Error()
+					return params
+				}
+				if r == nil {
+					attachment.Pretext = "Report is in sync"
+					return params
+				}
+				cause := r.GetDelayReason()
+				if cause == "" {
+					cause = "Sorry, I could not diagnose the problem in report sync delay"
+				}
+				attachment.Pretext = cause
+
+				return params
 			default:
 
 			}
 		}
 	}
 	return params
+}
+
+func FormatSlackMessageReport(attachment *slack.Attachment) {
+	attachment.Pretext = "Staging report is down"
 }

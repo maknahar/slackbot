@@ -51,6 +51,25 @@
       "formats":[],
       "postfixes":[],
       "response":""
+    },
+    {
+      "category": "Staging Report is Down",
+      "prefixes":[],
+      "prefixMandatory":false,
+      "case":false,
+      "formats":["JT-Staging-Reports-v2 is missing"],
+      "postfixes":[],
+      "response":""
+    },
+    {
+      "category": "Report is Down",
+      "prefixes":[],
+      "prefixMandatory":false,
+      "case":false,
+      "formats":["JT-Reports is missing"],
+      "postfixes":[],
+      "response":""
     }
+
   ]
 }

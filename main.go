@@ -15,6 +15,11 @@ var (
 	SLACK_TOKEN = os.Getenv("SLACK_TOKEN")
 )
 
+const (
+	MISSING_REPORT_STAGING = "JT-Staging-Reports-v2 is missing"
+	MISSING_REPORT         = "JT-Reports is missing"
+)
+
 func main() {
 
 	if SLACK_TOKEN == "" {
@@ -30,7 +35,6 @@ func main() {
 	router := GetRouter()
 	log.Println(os.Getenv("APP_NAME"), "listening in port", os.Getenv("PORT"))
 	http.ListenAndServe(":"+os.Getenv("PORT"), router)
-
 }
 
 func respond(rtm *slack.RTM, api *slack.Client, msg *slack.MessageEvent, prefix string) {
@@ -40,7 +44,9 @@ func respond(rtm *slack.RTM, api *slack.Client, msg *slack.MessageEvent, prefix 
 	text = strings.ToLower(text)
 	response := interpreter.ProcessQuery(text)
 	if response.Attachments[0].Pretext == "" {
-		rtm.SendMessage(rtm.NewOutgoingMessage(`I'm sorry, I don't understand! Sometimes I have an easier time with a few simple keywords.`, msg.Channel))
+		rtm.SendMessage(rtm.NewOutgoingMessage(
+			`I'm sorry, I don't understand! Sometimes I have an easier time with a few simple keywords.`,
+			msg.Channel))
 	} else {
 		api.PostMessage(msg.Channel, "", response)
 	}
@@ -60,7 +66,9 @@ Loop:
 				info := rtm.GetInfo()
 				prefix := fmt.Sprintf("<@%s>", info.User.ID)
 				//TODO add prefix exception if message is a direct message to bot
-				if ev.User != info.User.ID && strings.Contains(ev.Text, prefix) {
+				if ev.User != info.User.ID && (strings.Contains(ev.Text, prefix) ||
+					strings.Contains(ev.Text, MISSING_REPORT_STAGING) ||
+					strings.Contains(ev.Text, MISSING_REPORT)) {
 					go respond(rtm, api, ev, prefix)
 				}
 				//fmt.Println(ev.User != info.User.ID && strings.HasPrefix(ev.Text, prefix))

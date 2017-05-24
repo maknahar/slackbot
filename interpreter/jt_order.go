@@ -146,6 +146,14 @@ func (o *Order) FormatSlackMessage(attachment *slack.Attachment) {
 	attachment.Fields = append(attachment.Fields, slack.AttachmentField{Title: "Session ID",
 		Value: o.SessionID,
 		Short: false})
+	seats := ""
+	for _, v := range o.Bill.Breakups {
+		seats += v.SeatClass + " " + strings.TrimLeft(v.SeatID, v.SeatClass) + ", "
+	}
+	strings.TrimRight(seats, ",")
+	attachment.Fields = append(attachment.Fields, slack.AttachmentField{Title: "Seats",
+		Value: seats,
+		Short: false})
 	if o.AssistedOrderID.String != "" {
 		attachment.Fields = append(attachment.Fields, slack.AttachmentField{Title: "Session ID",
 			Value: o.AssistedOrderID.String,
