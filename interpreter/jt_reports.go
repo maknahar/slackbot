@@ -13,6 +13,8 @@ import (
 
 	"os"
 
+	"regexp"
+
 	"github.com/maknahar/go-utils"
 )
 
@@ -65,7 +67,9 @@ func (r *ReportResponse) GetDelayReason() string {
 	}
 
 	if strings.Contains(r.FailureReason, "SessionNotFound") {
-		return fmt.Sprintf("A session is missing from data pack since %s", fromTime)
+		s := regexp.MustCompile("[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4[a-fA-F0-9]{3}-[8|9|aA|bB][a-fA-F0-9]{3}-[a-fA-F0-9]{12}$")
+		sessionID := s.FindString(r.FailureReason)
+		return fmt.Sprintf("Session "+sessionID+" is missing from data pack since %s", fromTime)
 	}
 
 	if r.FailureReason == "" {
