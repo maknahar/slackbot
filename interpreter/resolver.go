@@ -79,12 +79,7 @@ func ProcessQuery(q string) slack.PostMessageParameters {
 					attachment.Pretext = "Report is in sync"
 					return params
 				}
-				cause := r.GetDelayReason()
-				if cause == "" {
-					cause = "Sorry, I could not diagnose the problem in report sync delay"
-				}
-				attachment.Pretext = cause
-
+				r.FormatSlackMessage(attachment)
 				return params
 
 			case "Report is Down":
@@ -98,12 +93,7 @@ func ProcessQuery(q string) slack.PostMessageParameters {
 					attachment.Pretext = "Report is in sync"
 					return params
 				}
-				cause := r.GetDelayReason()
-				if cause == "" {
-					cause = "Sorry, I could not diagnose the problem in report sync delay"
-				}
-				attachment.Pretext = cause
-
+				r.FormatSlackMessage(attachment)
 				return params
 			default:
 

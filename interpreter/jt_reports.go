@@ -2,30 +2,30 @@ package interpreter
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
+	"regexp"
 	"strings"
 	"time"
 
-	"errors"
-
-	"os"
-
-	"regexp"
-
 	"github.com/maknahar/go-utils"
+	"github.com/nlopes/slack"
 )
 
 type ReportResponse struct {
-	CreatedAt     string `json:"CreatedAt"`
-	CurrentTime   string `json:"CurrentTime"`
-	FailureReason string `json:"FailureReason"`
-	FromTime      string `json:"FromTime"`
-	Status        string `json:"Status"`
-	ToTime        string `json:"ToTime"`
-	UpdatedAt     string `json:"UpdatedAt"`
+	CreatedAt      string `json:"CreatedAt"`
+	CurrentTime    string `json:"CurrentTime"`
+	FailureReason  string `json:"FailureReason"`
+	FromTime       string `json:"FromTime"`
+	Status         string `json:"Status"`
+	ToTime         string `json:"ToTime"`
+	UpdatedAt      string `json:"UpdatedAt"`
+	Link           string
+	MissingSession string
 }
 
 func GetReportStatus(staging bool) (*ReportResponse, error) {
@@ -55,8 +55,10 @@ func GetReportStatus(staging bool) (*ReportResponse, error) {
 	if l == 0 {
 		return nil, errors.New("Report Service might be down")
 	}
+	activity := &order[l-1]
+	activity.Link = url
 
-	return &order[l-1], nil
+	return activity, nil
 }
 
 func (r *ReportResponse) GetDelayReason() string {
@@ -68,17 +70,59 @@ func (r *ReportResponse) GetDelayReason() string {
 
 	if strings.Contains(r.FailureReason, "SessionNotFound") {
 		s := regexp.MustCompile("[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4[a-fA-F0-9]{3}-[8|9|aA|bB][a-fA-F0-9]{3}-[a-fA-F0-9]{12}$")
-		sessionID := s.FindString(r.FailureReason)
-		return fmt.Sprintf("Session "+sessionID+" is missing from data pack since %s", fromTime)
+		r.MissingSession = s.FindString(r.FailureReason)
+		return fmt.Sprintf("A Session is missing from data pack since %s", fromTime)
 	}
 
 	if r.FailureReason == "" {
 		if time.Since(fromTime).Minutes() > 15 {
-			return fmt.Sprintf("Report sync is running smoothly. However there is delay of %s",
-				time.Since(fromTime).String())
+			return fmt.Sprintf("Report sync is running smoothly.")
 		}
 		return fmt.Sprintf("Report is in sync")
 	}
 
 	return ""
+}
+
+func (r *ReportResponse) FormatSlackMessage(attachment *slack.Attachment) {
+	cause := r.GetDelayReason()
+	if cause == "" {
+		cause = "Sorry, I could not diagnose the problem in report sync delay"
+
+	}
+	attachment.Pretext = cause
+	attachment.Title = "Report Sync Activity Details"
+	attachment.TitleLink = r.Link
+	if r.MissingSession != "" {
+		attachment.Fields = append(attachment.Fields, slack.AttachmentField{
+			Title: "Missing Session ID",
+			Value: r.MissingSession,
+			Short: true})
+	}
+
+	loc, _ := time.LoadLocation("Asia/Kolkata")
+	fromTime, err := time.ParseInLocation("2006-01-02T15:04:05.999999", r.FromTime, loc)
+	if err == nil {
+		attachment.Fields = append(attachment.Fields, slack.AttachmentField{
+			Title: "Delay:",
+			Value: time.Since(fromTime).String(),
+			Short: true})
+	}
+
+	ct, err := time.ParseInLocation("2006-01-02T15:04:05.999999", r.CreatedAt, loc)
+	if err == nil {
+		attachment.Fields = append(attachment.Fields, slack.AttachmentField{
+			Title: "Created At:",
+			Value: ct.Format("2006-01-02 15:04:05"),
+			Short: true})
+	}
+
+	ut, err := time.ParseInLocation("2006-01-02T15:04:05.999999", r.UpdatedAt, loc)
+	if err == nil {
+		attachment.Fields = append(attachment.Fields, slack.AttachmentField{
+			Title: "Last Updated At:",
+			Value: ut.Format("2006-01-02 15:04:05"),
+			Short: true})
+	}
+
 }
