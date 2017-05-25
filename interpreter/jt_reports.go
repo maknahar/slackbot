@@ -78,7 +78,7 @@ func (r *ReportResponse) GetDelayReason() string {
 		if time.Since(fromTime).Minutes() > 15 {
 			return fmt.Sprintf("Report sync is running smoothly.")
 		}
-		return fmt.Sprintf("Report is in sync")
+		return fmt.Sprintf("Report is in sync.")
 	}
 
 	return ""
@@ -87,7 +87,7 @@ func (r *ReportResponse) GetDelayReason() string {
 func (r *ReportResponse) FormatSlackMessage(attachment *slack.Attachment) {
 	cause := r.GetDelayReason()
 	if cause == "" {
-		cause = "Sorry, I could not diagnose the problem in report sync delay"
+		cause = "Sorry, I could not diagnose the problem in report sync delay."
 
 	}
 	attachment.Pretext = cause
