@@ -75,10 +75,6 @@ func ProcessQuery(q string) slack.PostMessageParameters {
 					attachment.Pretext = err.Error()
 					return params
 				}
-				if r == nil {
-					attachment.Pretext = "Report is in sync"
-					return params
-				}
 				r.FormatSlackMessage(attachment)
 				return params
 
@@ -87,10 +83,6 @@ func ProcessQuery(q string) slack.PostMessageParameters {
 				if err != nil {
 					log.Println("Error:", err)
 					attachment.Pretext = err.Error()
-					return params
-				}
-				if r == nil {
-					attachment.Pretext = "Report is in sync"
 					return params
 				}
 				r.FormatSlackMessage(attachment)
