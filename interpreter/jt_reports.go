@@ -95,10 +95,15 @@ func (r *ReportResponse) FormatSlackMessage(attachment *slack.Attachment) {
 	attachment.TitleLink = r.Link
 	if r.MissingSession != "" {
 		attachment.Fields = append(attachment.Fields, slack.AttachmentField{
-			Title: "Missing Session ID",
+			Title: "Missing Session ID:",
 			Value: r.MissingSession,
 			Short: true})
 	}
+
+	attachment.Fields = append(attachment.Fields, slack.AttachmentField{
+		Title: "Status:",
+		Value: r.Status,
+		Short: true})
 
 	loc, _ := time.LoadLocation("Asia/Kolkata")
 	fromTime, err := time.ParseInLocation("2006-01-02T15:04:05.999999", r.FromTime, loc)
