@@ -15,11 +15,6 @@ var (
 	SLACK_TOKEN = os.Getenv("SLACK_TOKEN")
 )
 
-const (
-	MISSING_REPORT_STAGING = "JT-Staging-Reports-v2 is missing"
-	MISSING_REPORT         = "JT-Reports is missing"
-)
-
 func main() {
 
 	if SLACK_TOKEN == "" {
@@ -66,9 +61,7 @@ Loop:
 				info := rtm.GetInfo()
 				prefix := fmt.Sprintf("<@%s>", info.User.ID)
 				//TODO add prefix exception if message is a direct message to bot
-				if ev.User != info.User.ID && (strings.Contains(ev.Text, prefix) ||
-					strings.Contains(ev.Text, MISSING_REPORT_STAGING) ||
-					strings.Contains(ev.Text, MISSING_REPORT)) {
+				if ev.User != info.User.ID && strings.Contains(ev.Text, prefix) {
 					go respond(rtm, api, ev, prefix)
 				}
 				//fmt.Println(ev.User != info.User.ID && strings.HasPrefix(ev.Text, prefix))
