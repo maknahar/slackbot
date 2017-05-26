@@ -81,15 +81,11 @@ func (r *ReportResponse) GetDelayReason() string {
 		return fmt.Sprintf("Report is in sync.")
 	}
 
-	return ""
+	return r.FailureReason
 }
 
 func (r *ReportResponse) FormatSlackMessage(attachment *slack.Attachment) {
 	cause := r.GetDelayReason()
-	if cause == "" {
-		cause = "Sorry, I could not diagnose the problem in report sync delay."
-
-	}
 	attachment.Pretext = cause
 	attachment.Title = "Report Sync Activity Details"
 	attachment.TitleLink = r.Link
