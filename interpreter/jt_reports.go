@@ -46,6 +46,9 @@ func GetReportStatus(staging bool) (*ReportResponse, error) {
 	order := make([]ReportResponse, 0)
 	err = json.Unmarshal(d, &order)
 	if err != nil {
+		if res.StatusCode == http.StatusServiceUnavailable {
+			return nil, errors.New("Report Service is unavailable")
+		}
 		log.Println("Error in decoding report response", err, go_utils.JsonPrettyPrint(string(d),
 			"", "\t"))
 		return nil, errors.New("Error in decoding report response")
