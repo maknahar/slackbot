@@ -74,7 +74,7 @@ func (r *ReportResponse) GetDelayReason() string {
 	if strings.Contains(r.FailureReason, "SessionNotFound") {
 		s := regexp.MustCompile("[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4[a-fA-F0-9]{3}-[8|9|aA|bB][a-fA-F0-9]{3}-[a-fA-F0-9]{12}$")
 		r.MissingSession = s.FindString(r.FailureReason)
-		return fmt.Sprintf("A Session is missing from data pack since %s", fromTime)
+		return fmt.Sprintf("A Session is missing from data pack since %s", fromTime.Format("02-01-2006 03:04pm"))
 	}
 
 	if r.FailureReason == "" {
@@ -117,7 +117,7 @@ func (r *ReportResponse) FormatSlackMessage(attachment *slack.Attachment) {
 	if err == nil {
 		attachment.Fields = append(attachment.Fields, slack.AttachmentField{
 			Title: "Created At:",
-			Value: ct.Format("2006-01-02 15:04:05"),
+			Value: ct.Format("02-01-2006 03:04pm"),
 			Short: true})
 	}
 
@@ -125,7 +125,7 @@ func (r *ReportResponse) FormatSlackMessage(attachment *slack.Attachment) {
 	if err == nil {
 		attachment.Fields = append(attachment.Fields, slack.AttachmentField{
 			Title: "Last Updated At:",
-			Value: ut.Format("2006-01-02 15:04:05"),
+			Value: ut.Format("02-01-2006 03:04pm"),
 			Short: true})
 	}
 
